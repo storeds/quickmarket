@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.quickmarket.product.dao.IndexDao">
+
+    <resultMap id="upAndDownMap" type="com.quickmarket.product.vo.UpAndDown" >
+        <result column="publish_status" jdbcType="INTEGER" property="publishStatus"/>
+        <result column="num" jdbcType="INTEGER" property="num"/>
+    </resultMap>
+
+    <resultMap id="ordercountMap" type="com.quickmarket.product.vo.OrderCount">
+        <result column="stu" jdbcType="INTEGER" property="status"/>
+        <result column="staus" jdbcType="INTEGER" property="staus"/>
+    </resultMap>
+
+    <resultMap id="odToAndSaleToMap" type="com.quickmarket.product.vo.TodayAllCount">
+        <result column="today_count" jdbcType="INTEGER" property="orderCount"/>
+        <result column="sale_all" jdbcType="INTEGER" property="saleCount"/>
+    </resultMap>
+
+    <!--展示今日订单总数， 今日销售总数-->
+    <select id="getOdToAndSaleTo" resultMap="odToAndSaleToMap">
+       select count(*) today_count ,sum(pay_amount) sale_all from oms_order where to_days(create_time) = to_days(now());
+    </select>
+
+    <!--展示有各个订单的数量-->
+    <select id="getOrdercount" resultMap="ordercountMap">
+       select s.status stu, count(*) staus  from oms_order s GROUP BY s.status
+    </select>
+
+    <!--全部商品-->
+    <select id="getProductCount"  resultType="Integer">
+       select count(*) productall from pms_product;
+    </select>
+
+    <!--已经下架和上架的商品-->
+    <select id="getUpAndDown" resultMap="upAndDownMap">
+        select publish_status, count(*) num from pms_product ps GROUP BY ps.publish_status;
+    </select>
+
+    <!--订单数本月-->
+    <select id="getMothOd" resultType="Integer">
+        SELECT count(*) FROM oms_order WHERE DATE_FORMAT( create_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+    </select>
+
+    <!--订单数本周-->
+    <select id="getWeekOd" resultType="Integer">
+        SELECT count(*) FROM oms_order where <![CDATA[ DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(create_time) ]]>
+    </select>
+
+    <!--销售额本月-->
+    <select id="getMothSale" resultType="Integer">
+        SELECT sum(oms_order.pay_amount) FROM oms_order WHERE <![CDATA[ DATE_FORMAT( create_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) ]]>
+    </select>
+
+    <!--销售额本周-->
+    <select id="getWeekSale" resultType="Integer">
+        SELECT sum(oms_order.pay_amount) FROM oms_order where   <![CDATA[ DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= date(create_time) ]]> <![CDATA[ ]]>
+    </select>
+
+</mapper>

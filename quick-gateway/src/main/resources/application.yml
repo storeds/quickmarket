@@ -1,0 +1,59 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: quickmall-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
+          enabled: true
+      routes:
+        - id: quickmall-authcenter
+          uri: lb://quickmall-authcenter
+          predicates:
+            - Path=/oauth/**
+        - id: quickmall-member
+          uri: lb://quickmall-member
+          predicates:
+            - Path=/sso/**,/member/**
+        - id: quickmarket-order
+          uri: lb://quickmarket-order
+          predicates:
+            - Path=/cart/**,/order/**
+        - id: quickmall-product
+          uri: lb://quickmall-product
+          predicates:
+            - Path=/pms/**
+        - id: quickmall-coupons
+          uri: lb://quickmall-coupons
+          predicates:
+            - Path=/coupon/**
+        - id: quickmarket-portal
+          uri: lb://quickmarket-portal
+          predicates:
+            - Path=/home/**,/portal/**
+    nacos:
+      discovery:
+        server-addr: 192.168.96.132:8848
+
+management: #开启SpringBoot Admin的监控
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+
+quick:
+  gateway:
+    shouldSkipUrls:
+      - /oauth/**
+      - /sso/**
+      - /home/**
+      - /pms/**

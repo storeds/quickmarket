@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.96.132:8848
+        file-extension: yml
+        shared-dataids: quickmall-db-common.yml,quickmall-nacos.yml
+        refreshable-dataids: quickmall-db-common.yml,quickmall-nacos.yml
+  application:
+    name: quickmall-coupons
+  profiles:
+    active: dev

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quickmarket.order.dao.MiaoShaStockDao">
+
+    <!--<update id="descStock">
+        UPDATE sms_flash_promotion_product_relation
+          SET flash_promotion_count = flash_promotion_count-1
+        WHERE
+          id = #{id} and flash_promotion_count>0
+    </update>-->
+
+    <update id="descStockInVersion">
+        UPDATE sms_flash_promotion_product_relation
+          SET flash_promotion_count=#{newStock}
+        WHERE
+            id = #{id} and flash_promotion_count=#{oldStock}
+    </update>
+
+    <update id="descStockInLock">
+        UPDATE sms_flash_promotion_product_relation
+          SET flash_promotion_count=#{stock}
+        WHERE
+          id = #{id}
+    </update>
+
+    <select id="selectMiaoShaStock" resultType="java.lang.Integer">
+        select flash_promotion_count from sms_flash_promotion_product_relation where id=#{id}
+    </select>
+
+    <select id="selectMiaoShaStockInLock" resultType="java.lang.Integer">
+        select flash_promotion_count from sms_flash_promotion_product_relation where id=#{id} for UPDATE
+    </select>
+    <!--扣减库存 防止库存超卖-->
+    <update id="descStock">
+        UPDATE sms_flash_promotion_product_relation
+        SET flash_promotion_count = CASE
+          WHEN flash_promotion_count>=#{stock} THEN
+            flash_promotion_count - #{stock}
+          ELSE
+            flash_promotion_count
+          END
+        WHERE
+        id = #{id}
+    </update>
+
+
+    <!-- 扣减库存，采用了乐观锁的方式，同时防止超卖 -->
+    <update id="descNormalStock">
+        update  pms_sku_stock s
+        set s.lock_stock = case
+        when s.stock - #{quity} - s.lock_stock >= 0 then
+        s.lock_stock + #{quity}
+        else s.lock_stock
+        end
+        where s.product_id = #{id} and s.id = #{skuId} and s.stock = #{oldstock}
+    </update>
+
+
+<!--    <update id="descNormalStock">-->
+<!--        update pms_product p , pms_sku_stock s-->
+<!--        set s.lock_stock = case-->
+<!--        when s.stock - #{quity} - s.lock_stock >= 0 then-->
+<!--        s.lock_stock = s.lock_stock + #{quity}-->
+<!--        else s.lock_stock = s.lock_stock-->
+<!--        end-->
+<!--        ,p.stock = case-->
+<!--        when p.stock - #{quity} >= 0 then-->
+<!--        p.stock = p.stock - #{quity}-->
+<!--        else p.stock = p.stock-->
+<!--        end-->
+<!--        where p.id = #{id} and s.id = #{skuId} and p.stock = #{oldstock}-->
+<!--    </update>-->
+
+
+
+
+
+</mapper>

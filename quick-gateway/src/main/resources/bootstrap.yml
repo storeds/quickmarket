@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: quickmall-gateway
+  cloud:
+      nacos:
+        config:
+          server-addr: 192.168.96.132:8848 #配置中心的地址
+          file-extension: yml #配置文件结尾的配置
+          shared-dataids: quickmall-nacos.yml #商城公共配置
+          refreshable-dataids: quickmall-nacos.yml
+  profiles:
+    active: dev
+

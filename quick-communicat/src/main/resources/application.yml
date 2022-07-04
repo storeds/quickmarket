@@ -1,0 +1,30 @@
+server:
+  port: 8068
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.96.132:8848
+  application:
+    name: quickmall-communicat
+  datasource:
+    url: jdbc:mysql://192.168.96.132:3306/micromall?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+    druid:
+      initial-size: 5 #连接池初始化大小
+      min-idle: 10 #最小空闲连接数
+      max-active: 20 #最大连接数
+      web-stat-filter:
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+      stat-view-servlet: #访问监控网页的登录用户名和密码
+        login-username: druid
+        login-password: druid
+
+
+netty:
+  #监听websocket连接的端口
+  port: 12321
+  #此处要用电脑的ip,不然手机访问会出现问题
+  ws: ws://localhost:${netty.port}/ws

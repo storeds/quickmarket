@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 192.168.96.132:8848
+        file-extension: yml
+        shared-dataids: quickmall-nacos.yml
+        refreshable-dataids: quickmall-nacos.yml
+        max-retry: 10
+  application:
+    name: quickmarket-order
+  profiles:
+    active: dev
+
