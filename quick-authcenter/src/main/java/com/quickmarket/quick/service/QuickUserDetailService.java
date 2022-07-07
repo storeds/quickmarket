@@ -27,6 +27,12 @@ public class QuickUserDetailService implements UserDetailsService {
     @Autowired
     UmsMemberFeignService umsMemberFeignService;
 
+    /**
+     * 加载用户信息
+     * @param userName
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
@@ -41,18 +47,18 @@ public class QuickUserDetailService implements UserDetailsService {
         if(null == umsMember) {
             log.warn("根据用户名没有查询到对应的用户信息:{}",userName);
         }
-
         log.info("根据用户名:{}获取用户登陆信息:{}",userName,umsMember);
-
         MemberDetails memberDetails = new MemberDetails(umsMember);
 
         return memberDetails;
     }
 
 
-
-
-
+    /**
+     * 获取用户信息
+     * @param username
+     * @return
+     */
     public UmsMember getbyUsername(String username) {
         // 同过fegin获取会员信息
         CommonResult<UmsMember> umsMember = umsMemberFeignService.loadUserByUsername(username);

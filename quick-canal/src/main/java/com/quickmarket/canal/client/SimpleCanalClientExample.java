@@ -36,7 +36,6 @@ public class SimpleCanalClientExample {
                     }
                 } else {
                     emptyCount = 0;
-                    // System.out.printf("message[batchId=%s,size=%s] \n", batchId, size);
                     printEntry(message.getEntries());
                 }
 
