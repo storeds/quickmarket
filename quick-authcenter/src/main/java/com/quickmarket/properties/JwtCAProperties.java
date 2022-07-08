@@ -18,7 +18,6 @@ public class JwtCAProperties {
      */
     private String keyPairName;
 
-
     /**
      * 证书别名
      */

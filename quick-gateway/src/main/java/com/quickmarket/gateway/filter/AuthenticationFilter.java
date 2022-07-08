@@ -42,10 +42,7 @@ import java.util.Map;
 public class AuthenticationFilter implements GlobalFilter, InitializingBean {
 
 
-    /**
-     * jwt的公钥,需要网关启动,远程调用认证中心去获取公钥
-     */
-    private PublicKey publicKey;
+
 
     @Autowired
     private RestTemplate restTemplate;
@@ -115,14 +112,18 @@ public class AuthenticationFilter implements GlobalFilter, InitializingBean {
     }
 
 
+    /**
+     * 获取请求头并构造
+     * @param serverWebExchange
+     * @param claims
+     * @return
+     */
     private ServerWebExchange wrapHeader(ServerWebExchange serverWebExchange,Claims claims) {
 
         String loginUserInfo = JSON.toJSONString(claims);
-
-        //log.info("jwt的用户信息:{}",loginUserInfo);
+        log.info("jwt的用户信息:{}",loginUserInfo);
 
         String memberId = claims.get("additionalInfo", Map.class).get("memberId").toString();
-
         String nickName = claims.get("additionalInfo", Map.class).get("nickName").toString();
 
         //向headers中放文件，记得build
@@ -148,6 +149,16 @@ public class AuthenticationFilter implements GlobalFilter, InitializingBean {
         return false;
     }
 
+
+    /**
+     * jwt的公钥,需要网关启动,远程调用认证中心去获取公钥
+     */
+    private PublicKey publicKey;
+
+    /**
+     * 获取公钥
+     * @throws Exception
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
             // 发一个rpc请求获取公钥

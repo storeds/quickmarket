@@ -37,9 +37,9 @@ public class JwtTokenStoreConfig {
     public JwtAccessTokenConverter jwtAccessTokenConverter(){
         JwtAccessTokenConverter accessTokenConverter = new
                 JwtAccessTokenConverter();
-        //配置JWT使用的秘钥  对称加密
+        // 配置JWT使用的秘钥  对称加密
 
-//        //配置JWT使用的秘钥 非对称加密
+        // 配置JWT使用的秘钥 非对称加密
         accessTokenConverter.setKeyPair(keyPair());
         return accessTokenConverter;
     }

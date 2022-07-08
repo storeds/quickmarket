@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @program: quickmarket
  * @author: cx
  * @create: 2022-02-16 15:14
- * @description:
+ * @description: 自定义配置
  **/
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -36,6 +36,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(quickUserDetailService);
     }
 
+    /**
+     * 创建认证管理器
+     * @return
+     * @throws Exception
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

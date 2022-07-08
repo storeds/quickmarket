@@ -13,7 +13,7 @@ import java.util.Map;
  * @program: quickmarket
  * @author: cx
  * @create: 2022-02-16 16:33
- * @description:
+ * @description: token的增强器
  **/
 public class QuickTokenEnhancer implements TokenEnhancer {
     @Override
@@ -33,7 +33,6 @@ public class QuickTokenEnhancer implements TokenEnhancer {
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(retMap);
 
-        // TODO 后续将token添加到redis
 
         return accessToken;
     }

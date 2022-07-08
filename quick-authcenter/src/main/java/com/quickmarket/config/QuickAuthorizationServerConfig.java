@@ -29,12 +29,9 @@ import java.util.List;
  * @program: quickmarket
  * @author: cx
  * @create: 2022-02-16 15:08
- * @description:
+ * @description: 开启授权服务器
  **/
 @Configuration
-/**
- * 开启认证服务器
- */
 @EnableAuthorizationServer
 public class QuickAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
@@ -47,11 +44,20 @@ public class QuickAuthorizationServerConfig extends AuthorizationServerConfigure
     @Autowired
     private JwtAccessTokenConverter jwtAccessTokenConverter;
 
+    /**
+     * 第三方信息的存储
+     * @param clients
+     * @throws Exception
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.withClientDetails(clientDetails());
     }
 
+    /**
+     * 获取数据源
+     * @return
+     */
     @Bean
     public ClientDetailsService clientDetails(){
         return new JdbcClientDetailsService(dataSource);
@@ -72,13 +78,14 @@ public class QuickAuthorizationServerConfig extends AuthorizationServerConfigure
         //配置JWT的内容增强器
         TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
         List<TokenEnhancer> delegates = new ArrayList<>();
+        // 先增强后绑定转化器
         delegates.add(quickTokenEnhancer);
         delegates.add(jwtAccessTokenConverter);
         enhancerChain.setTokenEnhancers(delegates);
 
         //使用密码模式需要配置
         endpoints.authenticationManager(authenticationManagerBean)
-                //指定token存储策略是jwt
+                //指定token存储策略是jwt  和转化器
                 .tokenStore(tokenStore)
                 .accessTokenConverter(jwtAccessTokenConverter)
                 //refresh_token是否重复使用

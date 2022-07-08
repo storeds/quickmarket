@@ -80,6 +80,12 @@ public class JwtUtils {
     }
 
 
+    /**
+     * 远程调用获取公钥
+     * @param restTemplate
+     * @return
+     * @throws GateWayException
+     */
     public static PublicKey genPulicKey(RestTemplate restTemplate) throws GateWayException {
 
         String tokenKey = getTokenKeyByRemoteCall(restTemplate);
@@ -88,17 +94,11 @@ public class JwtUtils {
 
             //把获取的公钥开头和结尾替换掉
             String dealTokenKey =tokenKey.replaceAll("\\-*BEGIN PUBLIC KEY\\-*", "").replaceAll("\\-*END PUBLIC KEY\\-*", "").trim();
-
             java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
             X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(Base64.decodeBase64(dealTokenKey));
-
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
             PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
-
             log.info("生成公钥:{}",publicKey);
-
             return publicKey;
 
         }catch (Exception e) {
@@ -109,23 +109,25 @@ public class JwtUtils {
         }
     }
 
+    /**
+     * 进行信息的校验
+     * @param authHeader
+     * @param publicKey
+     * @return
+     */
     public static Claims validateJwtToken(String authHeader, PublicKey publicKey) {
         String token =null ;
         try{
+
             token = StringUtils.substringAfter(authHeader, AUTH_HEADER);
-
             Jwt<JwsHeader, Claims> parseClaimsJwt = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
-
             Claims claims = parseClaimsJwt.getBody();
-
             log.info("claims:{}",claims);
-
             return claims;
 
         }catch(Exception e){
 
             log.error("校验token异常:{},异常信息:{}",token,e.getMessage());
-
             throw new GateWayException(ResultCode.JWT_TOKEN_EXPIRE);
         }
     }
